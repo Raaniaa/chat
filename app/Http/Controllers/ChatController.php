@@ -16,8 +16,7 @@ class ChatController extends Controller
 
         return response()->json($messages, 200);
     }
-    public function sendMessage(Request $request) //send messages
-
+    public function sendMessage(Request $request)
     {
         $data = $request->only(['name', 'body']);
         if ($request->has('image')) {

@@ -11,6 +11,12 @@
                   <strong>{{message.name}}</strong> :
                 </span>
                 {{message.body}}
+                <img
+                  v-if="message.image"
+                  :src="`/uploads/${message.image}`"
+                  alt
+                  class="img-thumbnail"
+                />
               </p>
             </div>
           </div>
@@ -19,13 +25,11 @@
       </div>
       <div class="card-footer">
         <div style="display:flex;" class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="type your chat"
-            v-model="message"
-            @keyup.enter="sendMesaage"
-          />
+          <form @submit.prevent="sendMesaage()">
+            <input type="text" class="form-control" placeholder="type your chat" name="body" />
+            <input type="file" name="image" id="image" />
+            <button type="submit" class="btn btn-primary">Send</button>
+          </form>
         </div>
       </div>
     </div>
@@ -50,14 +54,14 @@ export default {
     },
   },
   methods: {
-    sendMesaage() {
-      axios
-        .post("/sendMessage", { name: this.name, body: this.message })
-        .then((response) => {
-          console.log(response);
-        });
-      this.messages.push();
-      this.message = "";
+    async sendMesaage() {
+      console.log(event.target);
+      let form = new FormData(event.target);
+      form.append("name", this.name);
+      try {
+        await axios.post("/sendMessage", form);
+        event.target.reset();
+      } catch (error) {}
     },
     getMessage() {
       axios.get("/messages").then((response) => {
